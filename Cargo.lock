@@ -3,7 +3,7 @@
 version = 3
 
 [[package]]
-name = "enums"
+name = "common-collections"
 version = "0.1.0"
 
 [[package]]

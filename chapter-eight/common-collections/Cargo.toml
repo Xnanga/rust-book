@@ -1,6 +1,5 @@
-workspace = { members = ["chapter-eight/common-collections"] }
 [package]
-name = "rust-book"
+name = "common-collections"
 version = "0.1.0"
 edition = "2021"
 
