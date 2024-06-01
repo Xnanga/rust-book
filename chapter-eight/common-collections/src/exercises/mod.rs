@@ -62,8 +62,6 @@ fn convert_to_pig_latin(text: &str) -> String {
         if vowels.contains(&char) { pig_latin_list.push(word.to_owned() + "-hay") } 
         else {
           let mut new_word = word.to_owned() + "-" + &char.to_string() + "ay";
-          // This will panic if a character requiring more than one byte is included
-          // find a way to iterate over the chars and remove the first one, then back to string
           new_word.remove(0);
           pig_latin_list.push(new_word)
         }
@@ -81,6 +79,59 @@ fn convert_to_pig_latin(text: &str) -> String {
   or all people in the company by department, sorted alphabetically.
 */
 
+struct Employee {
+  name: String,
+  department: String,
+}
+
+fn init_employee_db() {
+  let mut employee_db: HashMap<String, Vec<String>> = HashMap::new();
+
+  // Happy Paths
+  add_employee(&mut employee_db, "Add Nelly to Marketing");
+  add_employee(&mut employee_db, "Add Samantha to Engineering");
+  add_employee(&mut employee_db, "Add James to Marketing");
+
+  // Sad Paths
+  add_employee(&mut employee_db, "Add James to");
+  add_employee(&mut employee_db, "One Two Three Four");
+  add_employee(&mut employee_db, "");
+
+  get_all_employees_by_department(&mut employee_db, "Marketing");
+
+  println!("{:?}", employee_db);
+}
+
+fn add_employee(db: &mut HashMap<String, Vec<String>>, command: &str) -> () {
+  let lowercase_command = command.to_lowercase();
+  let mut command_words = lowercase_command.split_whitespace();
+  let add_command = command_words.next();
+  let name = command_words.next();
+  let to_command = command_words.next();
+  let department = command_words.next();
+
+  if !add_command.is_some_and(|cmd| cmd == "add") || !to_command.is_some_and(|cmd| cmd == "to") { return }
+
+  match(name, department) {
+    (Some(name), Some(department)) => {
+      let new_employee = Employee { name: name.to_string(), department: department.to_string() };
+      
+      if db.contains_key(&new_employee.department) {
+        let entry = db.entry(new_employee.department);
+        entry.or_insert_with(Vec::new).push(new_employee.name);
+      } else {
+        db.insert(new_employee.department, vec![new_employee.name]);
+      }
+    },
+    _ => return
+  }
+}
+
+fn get_all_employees_by_department(db: &mut HashMap<String, Vec<String>>, department: &str) -> Vec<String> {
+  // TODO: Figure out how to get Vec from HashMap or default to empty Vec if not found
+  // let entry = db.get(department).unwrap_or_else(|| Vec::new)
+  vec!["dummyName".to_string()]
+}
 
 pub fn run_all_exercises() {
   // Exercise One
@@ -92,4 +143,7 @@ pub fn run_all_exercises() {
   let random_sentence = "The quick brown fox jumped over the lazy dog";
   let pig_latin_sentence = convert_to_pig_latin(&random_sentence);
   println!("{}", pig_latin_sentence);
+
+  // Exercise Three
+  init_employee_db();
 }
