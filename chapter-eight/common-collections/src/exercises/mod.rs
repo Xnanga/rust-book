@@ -97,9 +97,12 @@ fn init_employee_db() {
   add_employee(&mut employee_db, "One Two Three Four");
   add_employee(&mut employee_db, "");
 
-  get_all_employees_by_department(&mut employee_db, "Marketing");
+  let marketing_employees = get_all_employees_by_department(&mut employee_db, "Marketing");
+  let ux_employees = get_all_employees_by_department(&mut employee_db, "UX");
 
   println!("{:?}", employee_db);
+  if marketing_employees.is_some() { println!("Marketing Employees: {:?}", marketing_employees.unwrap()); }
+  if ux_employees.is_some() { println!("UX Employees: {:?}", ux_employees.unwrap()); }
 }
 
 fn add_employee(db: &mut HashMap<String, Vec<String>>, command: &str) -> () {
@@ -127,10 +130,17 @@ fn add_employee(db: &mut HashMap<String, Vec<String>>, command: &str) -> () {
   }
 }
 
-fn get_all_employees_by_department(db: &mut HashMap<String, Vec<String>>, department: &str) -> Vec<String> {
+fn get_all_employees_by_department(db: &mut HashMap<String, Vec<String>>, department: &str) -> Option<Vec<String>> {
   // TODO: Figure out how to get Vec from HashMap or default to empty Vec if not found
-  // let entry = db.get(department).unwrap_or_else(|| Vec::new)
-  vec!["dummyName".to_string()]
+  let lowercase_department = department.to_lowercase();
+  let entry = db.get(&lowercase_department);
+  match entry {
+    Some(entry) => {
+      let entry_clone = entry.clone();
+      Some(entry_clone)
+    },
+    _ => None,
+  }
 }
 
 pub fn run_all_exercises() {
